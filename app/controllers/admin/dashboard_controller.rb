@@ -14,6 +14,6 @@ class Admin::DashboardController < ApplicationController
   private
 
   def authorize_admin
-    authorize :admin, :index?, policy_class: ApplicationPolicy
+    authorize :admin, :index?, policy_class: AdminPolicy
   end
 end
