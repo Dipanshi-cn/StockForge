@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html class="h-full bg-gray-50">
+  <head>
+    <title><%= content_for(:title) || "StockForge | Hardware Wholesale" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "tailwind" %>
+    <%= stylesheet_link_tag "application" %>
+    <%= javascript_importmap_tags %>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      body { font-family: 'Inter', sans-serif; }
+    </style>
+  </head>
+
+  <body class="h-full flex flex-col">
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-20">
+          <div class="flex items-center">
+            <%= link_to root_path, class: "flex items-center gap-2 group" do %>
+              <div class="bg-blue-600 p-2 rounded-lg group-hover:bg-blue-700 transition shadow-lg shadow-blue-100">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+              </div>
+              <span class="text-2xl font-extrabold text-gray-900 tracking-tight">Stock<span class="text-blue-600">Forge</span></span>
+            <% end %>
+            
+            <div class="hidden md:ml-12 md:flex md:space-x-8">
+              <%= link_to "Inventory", products_path, class: "text-gray-500 hover:text-blue-600 px-1 pt-1 text-sm font-semibold transition-colors flex items-center gap-1 border-b-2 border-transparent hover:border-blue-600 h-20" %>
+              <%= link_to "Categories", categories_path, class: "text-gray-500 hover:text-blue-600 px-1 pt-1 text-sm font-semibold transition-colors flex items-center gap-1 border-b-2 border-transparent hover:border-blue-600 h-20" %>
+              <% if user_signed_in? %>
+                <%= link_to "My Orders", orders_path, class: "text-gray-500 hover:text-blue-600 px-1 pt-1 text-sm font-semibold transition-colors flex items-center gap-1 border-b-2 border-transparent hover:border-blue-600 h-20" %>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-6">
+            <% if user_signed_in? %>
+              <%= link_to cart_path, class: "relative p-2 text-gray-400 hover:text-blue-600 transition flex items-center justify-center bg-gray-50 rounded-full hover:bg-blue-50" do %>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                <% if current_cart.cart_items.any? %>
+                  <span class="absolute top-0 right-0 block h-5 w-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-white">
+                    <%= current_cart.cart_items.sum(:quantity) %>
+                  </span>
+                <% end %>
+              <% end %>
+
+              <div class="h-8 w-px bg-gray-200 mx-2"></div>
+
+              <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                  <p class="text-xs font-bold text-gray-900"><%= current_user.email %></p>
+                  <p class="text-[10px] font-medium text-blue-600 uppercase tracking-widest"><%= current_user.role.humanize %></p>
+                </div>
+                <% if current_user.admin? %>
+                  <%= link_to "Admin Panel", admin_root_path, class: "bg-gray-900 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-gray-800 transition shadow-sm" %>
+                <% end %>
+                <%= button_to destroy_user_session_path, method: :delete, class: "text-gray-400 hover:text-red-600 transition" do %>
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                <% end %>
+              </div>
+            <% else %>
+              <%= link_to "Sign In", new_user_session_path, class: "text-sm font-bold text-gray-700 hover:text-blue-600 transition" %>
+              <%= link_to "Register", new_user_registration_path, class: "bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-100" %>
+            <% end %>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+      <% if notice %>
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8 rounded-r-lg shadow-sm animate-fade-in-down">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-blue-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <p class="text-sm font-semibold text-blue-800"><%= notice %></p>
+          </div>
+        </div>
+      <% end %>
+
+      <% if alert %>
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-8 rounded-r-lg shadow-sm animate-fade-in-down">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <p class="text-sm font-semibold text-red-800"><%= alert %></p>
+          </div>
+        </div>
+      <% end %>
+
+      <%= yield %>
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 pt-12 pb-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+          <div>
+            <div class="flex items-center gap-2 mb-6">
+              <div class="bg-blue-600 p-1.5 rounded text-white">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+              </div>
+              <span class="text-xl font-black text-gray-900 tracking-tight">StockForge</span>
+            </div>
+            <p class="text-sm text-gray-500 font-medium leading-relaxed">
+              Premium hardware wholesale management solutions for professionals. Built for speed, accuracy, and reliability.
+            </p>
+          </div>
+          <div>
+            <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-6">Inventory</h4>
+            <ul class="space-y-4">
+              <li><%= link_to "All Products", products_path, class: "text-sm font-bold text-gray-600 hover:text-blue-600 transition" %></li>
+              <li><%= link_to "Browse Categories", categories_path, class: "text-sm font-bold text-gray-600 hover:text-blue-600 transition" %></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-6">Support</h4>
+            <ul class="space-y-4">
+              <li><a href="#" class="text-sm font-bold text-gray-600 hover:text-blue-600 transition">Contact Admin</a></li>
+              <li><a href="#" class="text-sm font-bold text-gray-600 hover:text-blue-600 transition">Wholesale Terms</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">&copy; 2026 StockForge Hardware Wholesale. All Rights Reserved.</p>
+          <div class="flex gap-6">
+            <div class="w-6 h-6 text-gray-300 hover:text-blue-600 transition cursor-pointer">
+              <svg fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+            </div>
+            <div class="w-6 h-6 text-gray-300 hover:text-blue-600 transition cursor-pointer">
+              <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

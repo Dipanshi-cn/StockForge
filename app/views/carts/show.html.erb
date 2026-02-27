@@ -1,0 +1,92 @@
+<div class="max-w-4xl mx-auto py-12 px-6 bg-white rounded-[3rem] shadow-2xl shadow-gray-100 border border-gray-100 overflow-hidden flex flex-col relative">
+  <div class="absolute -top-32 -left-32 w-64 h-64 bg-red-50 rounded-full opacity-50 blur-3xl"></div>
+  <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-indigo-50 rounded-full opacity-50 blur-3xl"></div>
+
+  <div class="mb-16 border-b border-gray-100 pb-12 relative z-10 flex items-center justify-between">
+    <div>
+      <h1 class="text-5xl font-black text-gray-900 leading-none tracking-tight mb-4">Shopping Cart</h1>
+      <p class="text-lg font-medium text-gray-400 italic">Review your wholesale selection before finalizing distribution.</p>
+    </div>
+    <div class="bg-gray-50 px-6 py-4 rounded-2xl border border-gray-100 flex flex-col items-center shadow-inner">
+       <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Items</span>
+       <span class="text-2xl font-black text-gray-900 tracking-tighter"><%= @cart.cart_items.sum(:quantity) %></span>
+    </div>
+  </div>
+
+  <% if @cart.cart_items.any? %>
+    <div class="flex flex-col lg:flex-row gap-16 relative z-10">
+      <div class="w-full lg:w-3/5 space-y-8">
+        <% @cart.cart_items.each do |item| %>
+          <div class="bg-white rounded-[2rem] shadow-xl shadow-gray-100 border border-gray-100 p-8 flex items-center gap-8 group hover:shadow-2xl transition duration-500">
+            <div class="w-24 h-24 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-center text-gray-300 group-hover:bg-blue-50/50 group-hover:text-blue-200 transition duration-500 transform group-hover:rotate-6">
+              <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+            </div>
+            <div class="flex-grow">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h3 class="text-xl font-black text-gray-900 tracking-tight group-hover:text-blue-600 transition">
+                    <%= link_to item.product.name, product_path(item.product) %>
+                  </h3>
+                  <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">SKU: <%= item.product.sku %></p>
+                </div>
+                <%= button_to cart_item_path(item), method: :delete, class: "text-gray-300 hover:text-red-500 transition p-2 bg-gray-50 rounded-xl hover:bg-red-50 group-hover:rotate-90 duration-300" do %>
+                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <% end %>
+              </div>
+              <div class="flex items-center justify-between">
+                <%= form_with model: item, url: cart_item_path(item), method: :patch, class: "flex items-center gap-4 bg-gray-50 p-2 rounded-xl shadow-inner border border-gray-100" do |f| %>
+                  <%= f.number_field :quantity, value: item.quantity, min: 1, max: item.product.stock_quantity, class: "w-16 border-none bg-transparent rounded shadow-sm focus:ring-0 text-sm font-black italic tracking-tighter" %>
+                  <%= f.button type: :submit, class: "bg-gray-900 text-white p-2 rounded-lg hover:bg-blue-600 transition shadow-lg shadow-gray-100" do %>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                  <% end %>
+                <% end %>
+                <div class="text-right flex flex-col">
+                   <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Subtotal</span>
+                   <span class="text-xl font-black text-gray-900 tracking-tighter italic shadow-sm">$<%= number_with_precision(item.subtotal, precision: 2) %></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="w-full lg:w-2/5">
+        <div class="bg-indigo-900 text-white rounded-[3rem] shadow-2xl shadow-indigo-100 p-12 sticky top-28 overflow-hidden transform hover:rotate-1 transition duration-700 group">
+          <div class="absolute -top-32 -right-32 w-64 h-64 bg-indigo-800 rounded-full opacity-50 blur-3xl group-hover:scale-110 transition duration-1000"></div>
+          
+          <h2 class="text-2xl font-black mb-12 border-b border-indigo-800 pb-8 tracking-tight relative z-10">Order Summary</h2>
+          <div class="flex justify-between items-center mb-8 relative z-10">
+            <span class="text-xs font-black text-indigo-400 uppercase tracking-widest">Wholesale Total</span>
+            <span class="text-2xl font-black tracking-tight italic">$<%= number_with_precision(@cart.total_amount, precision: 2) %></span>
+          </div>
+          <div class="flex justify-between items-center mb-16 pt-8 border-t border-indigo-800 relative z-10">
+            <span class="text-lg font-black uppercase tracking-widest">Total Due</span>
+            <div class="text-right">
+              <p class="text-5xl font-black tracking-tighter italic shadow-indigo-900">$<%= number_with_precision(@cart.total_amount, precision: 2) %></p>
+              <p class="text-[10px] font-bold text-indigo-400 mt-2 uppercase tracking-widest">Pricing in USD</p>
+            </div>
+          </div>
+          
+          <div class="space-y-6 relative z-10">
+            <%= link_to new_order_path, class: "flex items-center justify-center gap-3 w-full bg-white text-indigo-900 py-6 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-indigo-50 transition shadow-2xl shadow-indigo-950/50 transform hover:-translate-y-1 active:scale-95 duration-300" do %>
+              Checkout Now
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            <% end %>
+            <%= link_to products_path, class: "block text-center text-xs font-black text-indigo-400 hover:text-white uppercase tracking-widest transition duration-300" do %>
+              Continue Shopping
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="text-center py-32 relative z-10">
+      <div class="bg-gray-50 w-32 h-32 rounded-full flex items-center justify-center mx-auto mb-10 text-gray-200 shadow-inner">
+        <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+      </div>
+      <h3 class="text-4xl font-black text-gray-900 tracking-tight mb-4">Your cart is currently empty.</h3>
+      <p class="text-lg font-medium text-gray-400 italic mb-12">Reservations will appear here once you select hardware from the inventory.</p>
+      <%= link_to products_path, class: "bg-blue-600 text-white px-12 py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition shadow-2xl shadow-blue-100" %>
+    </div>
+  <% end %>
+</div>

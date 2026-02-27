@@ -1,0 +1,30 @@
+<%= form_with model: [:admin, category], class: "space-y-8 bg-white p-12 rounded-2xl shadow-xl border border-gray-100 max-w-2xl mx-auto" do |f| %>
+  <% if category.errors.any? %>
+    <div class="bg-red-50 border-l-4 border-red-400 p-6 mb-10 rounded-xl shadow-sm">
+      <h2 class="text-lg font-black text-red-700 uppercase tracking-widest mb-4 flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        Validation Error
+      </h2>
+      <ul class="list-disc list-inside text-red-600 font-medium italic space-y-1">
+        <% category.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-10">
+    <%= f.label :name, "Category Name", class: "block text-xs font-black text-gray-400 uppercase tracking-widest mb-4" %>
+    <%= f.text_field :name, placeholder: "e.g., Power Tools, Plumbing Fixtures...", class: "w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-lg py-4 px-6 font-bold transition placeholder:text-gray-300" %>
+  </div>
+
+  <div class="mb-12">
+    <%= f.label :description, "Category Description", class: "block text-xs font-black text-gray-400 uppercase tracking-widest mb-4" %>
+    <%= f.text_area :description, rows: 5, placeholder: "Briefly describe the types of products in this category...", class: "w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-4 px-6 font-medium leading-relaxed italic transition placeholder:text-gray-300 resize-none" %>
+  </div>
+
+  <div class="flex items-center justify-between pt-10 border-t border-gray-50">
+    <%= link_to "Cancel", admin_categories_path, class: "text-gray-400 hover:text-indigo-600 font-extrabold uppercase text-xs tracking-widest transition" %>
+    <%= f.submit (category.new_record? ? "Create Category" : "Update Category"), class: "bg-indigo-600 text-white px-10 py-4 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-indigo-700 transition shadow-lg cursor-pointer transform hover:-translate-y-1 active:scale-95 shadow-indigo-200" %>
+  </div>
+<% end %>

@@ -1,0 +1,48 @@
+<div class="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+  <div class="sm:mx-auto sm:w-full sm:max-w-md">
+    <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900 tracking-tight">Login to StockForge</h2>
+    <p class="mt-2 text-center text-sm text-gray-500 font-medium italic">Hardware wholesale inventory management made simple.</p>
+  </div>
+
+  <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+    <div class="bg-white py-10 px-6 shadow-2xl rounded-2xl border border-gray-100 sm:px-12">
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "space-y-8" }) do |f| %>
+        <div>
+          <%= f.label :email, class: "block text-xs font-black text-gray-400 uppercase tracking-widest mb-3" %>
+          <div class="mt-1">
+            <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "appearance-none block w-full px-5 py-4 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-lg font-bold" %>
+          </div>
+        </div>
+
+        <div>
+          <%= f.label :password, class: "block text-xs font-black text-gray-400 uppercase tracking-widest mb-3" %>
+          <div class="mt-1">
+            <%= f.password_field :password, autocomplete: "current-password", class: "appearance-none block w-full px-5 py-4 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-lg font-bold" %>
+          </div>
+        </div>
+
+        <% if devise_mapping.rememberable? %>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <%= f.check_box :remember_me, class: "h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded-lg cursor-pointer" %>
+              <%= f.label :remember_me, class: "ml-3 block text-sm font-bold text-gray-500" %>
+            </div>
+            <%= render "devise/shared/links" %>
+          </div>
+        <% end %>
+
+        <div>
+          <%= f.submit "Sign In", class: "w-full flex justify-center py-5 px-6 border border-transparent rounded-xl shadow-lg text-sm font-black uppercase tracking-widest text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition cursor-pointer transform hover:-translate-y-1 active:scale-95" %>
+        </div>
+      <% end %>
+      
+      <div class="mt-10 pt-10 border-t border-gray-50 text-center">
+        <p class="text-sm font-bold text-gray-400 uppercase tracking-widest italic">Default Accounts</p>
+        <div class="mt-4 grid grid-cols-2 gap-4">
+          <div class="text-[10px] text-gray-500 font-mono bg-gray-50 p-2 rounded">Admin: admin@stockforge.com</div>
+          <div class="text-[10px] text-gray-500 font-mono bg-gray-50 p-2 rounded">Dealer: dealer@stockforge.com</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

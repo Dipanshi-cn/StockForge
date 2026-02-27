@@ -1,0 +1,85 @@
+<div class="max-w-4xl mx-auto py-12 px-6 bg-white rounded-[3rem] shadow-2xl shadow-gray-100 border border-gray-100 overflow-hidden flex flex-col relative">
+  <div class="absolute -top-32 -left-32 w-64 h-64 bg-green-50 rounded-full opacity-50 blur-3xl"></div>
+  <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-blue-50 rounded-full opacity-50 blur-3xl"></div>
+
+  <div class="mb-16 border-b border-gray-100 pb-12 relative z-10 flex items-center justify-between">
+    <div>
+      <h1 class="text-5xl font-black text-gray-900 leading-none tracking-tight mb-4">Final Distribution</h1>
+      <p class="text-lg font-medium text-gray-400 italic">Provide delivery instructions to finalize your wholesale order.</p>
+    </div>
+    <div class="bg-gray-50 px-6 py-4 rounded-2xl border border-gray-100 flex flex-col items-center shadow-inner">
+       <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Items To Ship</span>
+       <span class="text-2xl font-black text-gray-900 tracking-tighter"><%= current_cart.cart_items.sum(:quantity) %></span>
+    </div>
+  </div>
+
+  <div class="flex flex-col lg:flex-row gap-16 relative z-10">
+    <div class="w-full lg:w-3/5 space-y-12">
+      <h2 class="text-2xl font-black text-gray-900 tracking-tight uppercase border-b border-gray-50 pb-4">Distribution Logistics</h2>
+      <%= form_with model: @order, class: "space-y-10" do |f| %>
+        <% if @order.errors.any? %>
+          <div class="bg-red-50 border-l-4 border-red-500 p-8 rounded-xl shadow-inner mb-12">
+            <h3 class="text-lg font-black text-red-700 uppercase tracking-widest mb-4 flex items-center gap-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              Review Order Details
+            </h3>
+            <ul class="list-disc list-inside text-red-600 font-bold italic space-y-1">
+              <% @order.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div>
+          <%= f.label :delivery_address, "Precise Distribution Point", class: "block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4" %>
+          <%= f.text_area :delivery_address, rows: 4, placeholder: "Building name, street address, postal code...", class: "w-full border-gray-200 rounded-[2rem] shadow-xl focus:border-blue-500 focus:ring-blue-500 text-lg py-6 px-8 font-black transition duration-300 resize-none italic placeholder:text-gray-200" %>
+        </div>
+
+        <div>
+          <%= f.label :contact_number, "Authorized Distribution Contact", class: "block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4" %>
+          <%= f.text_field :contact_number, placeholder: "+1 (555) 000-0000", class: "w-full border-gray-200 rounded-[2rem] shadow-xl focus:border-blue-500 focus:ring-blue-500 text-xl py-6 px-8 font-black transition duration-300 placeholder:text-gray-200" %>
+        </div>
+
+        <div>
+          <%= f.label :notes, "Operational Notes (Optional)", class: "block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4" %>
+          <%= f.text_area :notes, rows: 3, placeholder: "Any specific handling instructions...", class: "w-full border-gray-200 rounded-[2rem] shadow-xl focus:border-blue-500 focus:ring-blue-500 text-base py-6 px-8 font-bold transition duration-300 resize-none italic placeholder:text-gray-200" %>
+        </div>
+
+        <div class="pt-8 border-t border-gray-100 flex items-center justify-between">
+           <%= link_to "Return to Review", cart_path, class: "text-gray-400 hover:text-blue-600 font-black text-xs uppercase tracking-widest transition flex items-center gap-2" %>
+           <%= f.submit "Authorize Wholesale Order", class: "bg-blue-600 text-white px-12 py-6 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-blue-700 transition shadow-2xl shadow-blue-100 cursor-pointer transform hover:-translate-y-1 active:scale-95 duration-300" %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="w-full lg:w-2/5">
+      <div class="bg-gray-50 p-12 rounded-[3rem] border border-gray-100 shadow-inner sticky top-28 overflow-hidden group">
+        <h2 class="text-2xl font-black text-gray-900 tracking-tight mb-12 border-b border-gray-200 pb-8 uppercase">Distribution Review</h2>
+        <div class="space-y-10 max-h-[30rem] overflow-y-auto mb-12 pr-4 scrollbar-hide">
+          <% current_cart.cart_items.each do |item| %>
+            <div class="flex justify-between items-start group">
+              <div class="flex gap-4">
+                <div class="w-12 h-12 bg-white rounded-2xl border border-gray-200 flex items-center justify-center text-gray-300 group-hover:bg-blue-50 group-hover:text-blue-300 transition duration-300 shadow-sm">
+                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                </div>
+                <div>
+                  <h4 class="text-sm font-black text-gray-900 line-clamp-1 group-hover:text-blue-600 transition"><%= item.product.name %></h4>
+                  <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Qty: <%= item.quantity %></p>
+                </div>
+              </div>
+              <span class="text-sm font-black text-gray-900 italic tracking-tighter">$<%= number_with_precision(item.subtotal, precision: 2) %></span>
+            </div>
+          <% end %>
+        </div>
+        <div class="flex justify-between items-center pt-8 border-t border-gray-200 bg-gradient-to-t from-gray-50 to-transparent">
+          <span class="text-xs font-black text-gray-400 uppercase tracking-widest">Total Distribution Value</span>
+          <div class="text-right">
+            <span class="text-4xl font-black text-gray-900 tracking-tighter italic shadow-sm">$<%= number_with_precision(current_cart.total_amount, precision: 2) %></span>
+            <p class="text-[8px] font-bold text-gray-400 mt-2 uppercase tracking-widest italic">Includes wholesale discounts</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

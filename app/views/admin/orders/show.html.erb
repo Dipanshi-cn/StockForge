@@ -1,0 +1,145 @@
+<% content_for :header, "Distribution Authorization Center" %>
+
+<div class="mb-12 flex items-center justify-between">
+  <div>
+    <h2 class="text-2xl font-black text-gray-900 tracking-tight leading-none mb-2 uppercase tracking-tighter italic">Reviewing Order <span class="text-gray-300 font-mono text-xl italic">#<%= @order.id %></span></h2>
+    <p class="text-sm font-medium text-gray-400 italic">Review and authorize distribution for <%= @order.user.email %>.</p>
+  </div>
+  <div class="bg-gray-50 px-8 py-6 rounded-3xl border border-gray-100 flex flex-col items-center shadow-inner group transition duration-500 hover:rotate-2">
+     <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Review Status</span>
+     <span class="inline-flex items-center px-6 py-2 rounded-2xl text-sm font-black uppercase tracking-widest shadow-xl border-4 border-white
+       <%= @order.pending? ? 'bg-yellow-600 text-white' : '' %>
+       <%= @order.approved? ? 'bg-green-600 text-white' : '' %>
+       <%= @order.rejected? ? 'bg-red-600 text-white' : '' %>">
+       <%= @order.status.humanize %>
+     </span>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-12">
+  <div class="lg:col-span-2 space-y-12">
+    <div class="flex items-center justify-between">
+      <h2 class="text-2xl font-black text-gray-900 tracking-tight uppercase tracking-tighter italic">Distribution Items</h2>
+      <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-50 px-3 py-1 rounded-full"><%= @order.order_items.count %> Products</span>
+    </div>
+    <div class="bg-white rounded-[3rem] shadow-2xl shadow-gray-100 border border-gray-100 overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-100">
+        <thead class="bg-gray-50 uppercase text-[10px] font-black tracking-widest text-gray-400">
+          <tr>
+            <th class="px-8 py-4 text-left">SKU / Hardware Item</th>
+            <th class="px-8 py-4 text-center">Unit Price</th>
+            <th class="px-8 py-4 text-center">Distribution Qty</th>
+            <th class="px-8 py-4 text-center">Real-time Stock</th>
+            <th class="px-8 py-4 text-right">Value Subtotal</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50 bg-white">
+          <% @order.order_items.each do |item| %>
+            <tr class="hover:bg-blue-50/20 transition duration-150 group">
+              <td class="px-8 py-6">
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1"><%= item.product.sku %></p>
+                <p class="text-lg font-black text-gray-900 tracking-tight group-hover:text-blue-600 transition italic leading-none"><%= item.product.name %></p>
+              </td>
+              <td class="px-8 py-6 text-center text-gray-500 font-bold italic tracking-tighter text-sm">$<%= number_with_precision(item.price, precision: 2) %></td>
+              <td class="px-8 py-6 text-center text-gray-900 font-black tracking-tighter italic"><%= item.quantity %> <%= item.product.unit %></td>
+              <td class="px-8 py-6 text-center">
+                <span class="inline-flex items-center px-4 py-2 rounded-xl text-[10px] font-black tracking-widest shadow-xl border-4 border-white
+                  <%= item.product.stock_quantity >= item.quantity ? 'bg-green-600 text-white' : 'bg-red-600 text-white' %>">
+                  <%= item.product.stock_quantity %> <%= item.product.unit %>
+                </span>
+              </td>
+              <td class="px-8 py-6 text-right text-xl font-black text-gray-900 italic tracking-tighter">$<%= number_with_precision(item.subtotal, precision: 2) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+        <tfoot class="bg-gray-900 text-white">
+          <tr>
+            <td colspan="4" class="px-8 py-8 text-right font-black uppercase tracking-widest text-xs">Distribution Net Total Value</td>
+            <td class="px-8 py-8 text-right text-3xl font-black italic tracking-tighter">$<%= number_with_precision(@order.total_amount, precision: 2) %></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <% if @order.notes.present? %>
+      <div class="p-10 bg-indigo-50/50 rounded-[3rem] border border-indigo-100 shadow-inner group transition duration-500">
+        <h3 class="text-xs font-black uppercase tracking-[0.2em] text-indigo-400 mb-6 flex items-center gap-3 italic">
+          <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+          Distribution Dispatch Notes
+        </h3>
+        <p class="text-xl font-black text-indigo-900 italic leading-relaxed whitespace-pre-wrap group-hover:scale-[1.01] transition transform duration-500 tracking-tight">"<%= @order.notes %>"</p>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-12">
+    <div>
+      <h2 class="text-2xl font-black mb-8 text-gray-900 tracking-tight uppercase tracking-tighter italic">Operational Details</h2>
+      <div class="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-100 space-y-10 group">
+        <div>
+          <h3 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4 italic">Distribution Point</h3>
+          <p class="text-xl font-black text-gray-900 leading-relaxed whitespace-pre-wrap tracking-tight italic group-hover:text-blue-600 transition"><%= @order.delivery_address %></p>
+        </div>
+        <div>
+          <h3 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4 italic">Contact Logistics</h3>
+          <p class="text-4xl font-black text-gray-900 tracking-tighter italic group-hover:text-indigo-600 transition"><%= @order.contact_number %></p>
+        </div>
+      </div>
+    </div>
+
+    <% if @order.pending? %>
+      <div>
+        <h2 class="text-2xl font-black mb-8 text-gray-900 tracking-tight uppercase tracking-tighter italic">Authorization Panel</h2>
+        <div class="bg-white p-10 rounded-[3.5rem] border border-gray-100 shadow-2xl shadow-indigo-100/50 space-y-10 relative overflow-hidden group">
+          <div class="absolute -top-32 -right-32 w-64 h-64 bg-green-50 rounded-full opacity-50 blur-3xl group-hover:scale-110 transition duration-1000"></div>
+          
+          <%= form_with url: approve_admin_order_path(@order), method: :patch, class: "space-y-10 relative z-10" do |f| %>
+            <div>
+              <%= f.label :expected_delivery_date, "Authorize Delivery Date", class: "block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6 italic" %>
+              <%= f.date_field :expected_delivery_date, required: true, min: Date.current, class: "w-full border-gray-200 rounded-[2rem] shadow-xl focus:border-green-500 focus:ring-green-500 text-xl py-6 px-8 font-black transition duration-300 italic transform hover:scale-[1.02]" %>
+            </div>
+            
+            <% if @order.order_items.all? { |i| i.product.stock_quantity >= i.quantity } %>
+              <%= f.submit "Authorize & Deduct Stock", class: "w-full bg-green-600 text-white py-6 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-green-700 transition shadow-2xl shadow-green-100 transform hover:-translate-y-1 active:scale-95 duration-300 cursor-pointer" %>
+            <% else %>
+              <div class="p-6 bg-red-100 text-red-800 rounded-3xl border border-red-200 text-xs font-black uppercase tracking-widest text-center italic shadow-inner">
+                Critical: Insufficient Wholesale Stock
+              </div>
+            <% end %>
+          <% end %>
+
+          <div class="border-t border-gray-100 pt-10 relative z-10">
+            <%= button_to reject_admin_order_path(@order), method: :patch, data: { confirm: "REJECT this distribution? This action is IRREVERSIBLE." }, class: "w-full bg-red-50 text-red-600 py-6 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition shadow-sm border-2 border-red-100 transform hover:-translate-y-1 active:scale-95 duration-300 cursor-pointer" do %>
+              Reject Authorization
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% elsif @order.approved? %>
+       <div class="bg-green-600 p-10 rounded-[3.5rem] shadow-2xl shadow-green-100 text-white group overflow-hidden relative">
+         <div class="absolute -top-32 -right-32 w-64 h-64 bg-green-500 rounded-full opacity-50 blur-3xl group-hover:scale-110 transition duration-1000"></div>
+         <div class="relative z-10">
+           <h3 class="text-xs font-black uppercase tracking-widest text-green-200 mb-4 italic">Fulfillment Authorized</h3>
+           <p class="text-3xl font-black italic tracking-tighter mb-8 leading-none">Delivering on <%= @order.expected_delivery_date.strftime("%B %d, %Y") %></p>
+           <p class="text-[10px] font-bold text-green-200 uppercase tracking-widest opacity-80">Approval Timestamp: <%= @order.approved_at.strftime("%B %d, %Y %H:%M") %></p>
+         </div>
+       </div>
+    <% elsif @order.rejected? %>
+       <div class="bg-red-600 p-10 rounded-[3.5rem] shadow-2xl shadow-red-100 text-white overflow-hidden relative group">
+         <div class="absolute -top-32 -right-32 w-64 h-64 bg-red-500 rounded-full opacity-50 blur-3xl group-hover:scale-110 transition duration-1000"></div>
+         <div class="relative z-10">
+           <h3 class="text-xs font-black uppercase tracking-widest text-red-200 mb-4 italic">Dispatch Rejected</h3>
+           <p class="text-3xl font-black italic tracking-tighter leading-none mb-4">Authorization Dismissed.</p>
+           <p class="text-sm font-medium text-red-100 italic opacity-80">This distribution request has been permanently closed.</p>
+         </div>
+       </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="mt-20 flex justify-center">
+  <%= link_to admin_orders_path, class: "text-gray-300 hover:text-indigo-600 font-black text-xs uppercase tracking-[0.2em] transition duration-500 flex items-center gap-4 group" do %>
+     <svg class="w-4 h-4 group-hover:-translate-x-2 transition transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+     Return to Review Queue
+  <% end %>
+</div>

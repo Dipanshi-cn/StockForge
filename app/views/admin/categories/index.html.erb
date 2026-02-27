@@ -1,0 +1,43 @@
+<div class="mb-12 border-b border-gray-100 pb-8 flex items-center justify-between">
+  <div>
+    <h1 class="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">Product Categories</h1>
+    <p class="text-gray-500 font-medium italic">Organize your hardware wholesale inventory.</p>
+  </div>
+  <div>
+    <%= link_to "Create New Category", new_admin_category_path, class: "bg-indigo-600 text-white px-8 py-3 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-indigo-700 transition shadow-lg transform hover:-translate-y-1 active:scale-95 flex items-center gap-2" %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  <% @categories.each do |category| %>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-xl transition duration-300">
+      <div class="p-8">
+        <div class="flex items-center justify-between mb-6">
+          <div class="bg-indigo-50 p-3 rounded-xl text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition duration-300 shadow-sm">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h10M7 11h10M7 15h10M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"></path></svg>
+          </div>
+          <span class="text-xs font-black text-gray-400 uppercase tracking-widest bg-gray-50 px-3 py-1 rounded-full"><%= category.products.count %> Products</span>
+        </div>
+        <h3 class="text-2xl font-black text-gray-900 mb-4 tracking-tight"><%= category.name %></h3>
+        <p class="text-gray-500 text-sm font-medium leading-relaxed italic mb-8"><%= category.description %></p>
+        
+        <div class="flex items-center gap-4 pt-6 border-t border-gray-50">
+          <%= link_to "View Products", admin_category_path(category), class: "text-blue-600 hover:text-blue-800 font-extrabold uppercase text-xs tracking-widest transition" %>
+          <%= link_to "Edit", edit_admin_category_path(category), class: "text-gray-400 hover:text-indigo-600 font-extrabold uppercase text-xs tracking-widest transition" %>
+          <%= button_to "Delete", admin_category_path(category), method: :delete, data: { confirm: "Are you sure?" }, class: "text-gray-300 hover:text-red-500 font-extrabold uppercase text-xs tracking-widest transition cursor-pointer" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<% if @categories.empty? %>
+  <div class="text-center py-24 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+    <div class="bg-white w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8 text-gray-300 shadow-sm">
+       <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    </div>
+    <h3 class="text-2xl font-bold text-gray-900 mb-2">No categories yet</h3>
+    <p class="text-gray-500 mb-10 max-w-sm mx-auto font-medium">Get started by creating your first product category.</p>
+    <%= link_to "Create Category", new_admin_category_path, class: "bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg" %>
+  </div>
+<% end %>

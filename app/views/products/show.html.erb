@@ -1,0 +1,72 @@
+<div class="max-w-6xl mx-auto py-12 px-6 bg-white rounded-[3rem] shadow-2xl shadow-gray-100 border border-gray-100 overflow-hidden flex flex-col lg:flex-row gap-16 relative">
+  <div class="absolute -top-32 -left-32 w-64 h-64 bg-blue-50 rounded-full opacity-50 blur-3xl"></div>
+  <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-indigo-50 rounded-full opacity-50 blur-3xl"></div>
+
+  <div class="w-full lg:w-1/2 flex items-center justify-center relative group">
+    <div class="w-full h-[40rem] bg-gray-50 rounded-[2.5rem] border border-gray-100 flex items-center justify-center transition group-hover:bg-blue-50/50 group-hover:rotate-1 duration-700 transform">
+       <svg class="w-48 h-48 text-gray-200 transition group-hover:text-blue-200 group-hover:scale-110 duration-700 transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+       <div class="absolute top-10 right-10">
+          <span class="inline-flex items-center px-6 py-3 rounded-2xl text-sm font-black uppercase tracking-widest shadow-xl border-4 border-white
+            <%= @product.stock_quantity > 0 ? 'bg-green-600 text-white' : 'bg-red-600 text-white' %>">
+            <%= @product.stock_quantity > 0 ? "In Stock: #{@product.stock_quantity}" : 'Sold Out' %>
+          </span>
+       </div>
+    </div>
+  </div>
+
+  <div class="w-full lg:w-1/2 flex flex-col justify-center py-8 relative z-10">
+    <div class="mb-12">
+      <div class="flex items-center gap-4 mb-6">
+        <span class="text-xs font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-4 py-2 rounded-xl shadow-inner border border-blue-100"><%= @product.category.name %></span>
+        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest font-mono">SKU: <%= @product.sku %></span>
+      </div>
+      <h1 class="text-6xl font-black text-gray-900 leading-none tracking-tight mb-8 transform group-hover:-translate-y-1 transition duration-500"><%= @product.name %></h1>
+      <div class="flex items-center gap-4 mb-10">
+        <div class="bg-gray-100 p-2 rounded-lg font-black text-xs uppercase tracking-widest text-gray-500 italic"><%= @product.brand %></div>
+        <div class="bg-indigo-50 p-2 rounded-lg font-black text-xs uppercase tracking-widest text-indigo-600 shadow-inner border border-indigo-100">Wholesale Verified</div>
+      </div>
+      <p class="text-xl font-medium text-gray-500 italic leading-relaxed max-w-xl"><%= @product.description %></p>
+    </div>
+
+    <div class="mb-16">
+      <div class="flex flex-col mb-4">
+        <span class="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Wholesale Unit Price</span>
+        <div class="flex items-baseline gap-2">
+          <span class="text-6xl font-black text-gray-900 tracking-tighter italic shadow-sm">$<%= number_with_precision(@product.selling_price, precision: 2) %></span>
+          <span class="text-sm font-bold text-gray-400 tracking-widest uppercase">per <%= @product.unit %></span>
+        </div>
+      </div>
+    </div>
+
+    <% if @product.stock_quantity > 0 %>
+      <div class="bg-gray-50 p-10 rounded-[2.5rem] border border-gray-100 shadow-inner">
+        <%= form_with url: cart_items_path, method: :post, class: "space-y-8" do |f| %>
+          <%= f.hidden_field :product_id, value: @product.id %>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 items-end">
+            <div>
+              <%= f.label :quantity, "Wholesale Quantity", class: "block text-xs font-black text-gray-400 uppercase tracking-widest mb-4" %>
+              <%= f.number_field :quantity, value: 1, min: 1, max: @product.stock_quantity, class: "w-full border-gray-200 rounded-2xl shadow-xl focus:border-blue-500 focus:ring-blue-500 text-xl font-black py-5 px-8 transition duration-300" %>
+            </div>
+            <%= f.submit "Reserve Inventory", class: "w-full bg-blue-600 text-white py-6 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-blue-700 transition shadow-2xl shadow-blue-200 cursor-pointer transform hover:-translate-y-1 active:scale-95 duration-300" %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-red-50 p-10 rounded-[2.5rem] border border-red-100 shadow-inner text-center">
+        <h3 class="text-xl font-black text-red-700 tracking-tight mb-2 uppercase">Out of Stock</h3>
+        <p class="text-sm font-bold text-red-500 italic">This hardware item is currently unavailable. Check back for restock.</p>
+      </div>
+    <% end %>
+
+    <div class="mt-12 flex items-center justify-between border-t border-gray-100 pt-10">
+      <%= link_to products_path, class: "text-gray-400 hover:text-blue-600 font-black text-xs uppercase tracking-widest transition flex items-center gap-2 group" do %>
+        <svg class="w-4 h-4 group-hover:-translate-x-1 transition transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        Back to Inventory
+      <% end %>
+      <div class="flex gap-4">
+        <button class="text-gray-300 hover:text-blue-500 transition"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></button>
+        <button class="text-gray-300 hover:text-blue-500 transition"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg></button>
+      </div>
+    </div>
+  </div>
+</div>

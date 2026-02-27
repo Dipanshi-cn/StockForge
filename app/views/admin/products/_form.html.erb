@@ -1,0 +1,89 @@
+<%= form_with model: [:admin, product], class: "space-y-12 bg-white p-16 rounded-2xl shadow-xl border border-gray-100 max-w-5xl mx-auto" do |f| %>
+  <% if product.errors.any? %>
+    <div class="bg-red-50 border-l-4 border-red-400 p-8 rounded-xl shadow-sm mb-12">
+      <h2 class="text-xl font-black text-red-700 uppercase tracking-widest mb-4 flex items-center gap-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        Validation Error
+      </h2>
+      <ul class="list-disc list-inside text-red-600 font-medium italic space-y-1">
+        <% product.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+    <div class="space-y-10">
+      <h3 class="text-xs font-black text-indigo-400 uppercase tracking-widest border-b pb-4">Basic Information</h3>
+      
+      <div>
+        <%= f.label :name, "Product Name", class: "block text-xs font-black text-gray-400 uppercase tracking-widest mb-4" %>
+        <%= f.text_field :name, class: "w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-lg py-4 px-6 font-bold transition" %>
+      </div>
+
+      <div class="grid grid-cols-2 gap-8">
+        <div>
+          <%= f.label :sku, "SKU (Unique)", class: "block text-xs font-black text-gray-400 uppercase tracking-widest mb-4" %>
+          <%= f.text_field :sku, class: "w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-4 px-6 font-mono font-bold tracking-widest transition" %>
+        </div>
+        <div>
+          <%= f.label :brand, "Brand", class: "block text-xs font-black text-gray-400 uppercase tracking-widest mb-4" %>
+          <%= f.text_field :brand, class: "w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-4 px-6 font-bold transition" %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :category_id, "Product Category", class: "block text-xs font-black text-gray-400 uppercase tracking-widest mb-4" %>
+        <%= f.collection_select :category_id, Category.all, :id, :name, {}, class: "w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-4 px-6 font-bold transition" %>
+      </div>
+
+      <div>
+        <%= f.label :description, "Product Description", class: "block text-xs font-black text-gray-400 uppercase tracking-widest mb-4" %>
+        <%= f.text_area :description, rows: 4, class: "w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-4 px-6 font-medium leading-relaxed transition resize-none" %>
+      </div>
+    </div>
+
+    <div class="space-y-10">
+      <h3 class="text-xs font-black text-indigo-400 uppercase tracking-widest border-b pb-4">Inventory & Pricing</h3>
+
+      <div class="grid grid-cols-2 gap-8">
+        <div>
+          <%= f.label :unit, "Unit (e.g. Piece, Box)", class: "block text-xs font-black text-gray-400 uppercase tracking-widest mb-4" %>
+          <%= f.text_field :unit, class: "w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-4 px-6 font-bold transition" %>
+        </div>
+        <div>
+          <%= f.label :branch, "Branch", class: "block text-xs font-black text-gray-400 uppercase tracking-widest mb-4" %>
+          <%= f.text_field :branch, class: "w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-4 px-6 font-bold transition" %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-8">
+        <div>
+          <%= f.label :cost_price, "Cost Price", class: "block text-xs font-black text-gray-400 uppercase tracking-widest mb-4" %>
+          <%= f.number_field :cost_price, step: 0.01, class: "w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-4 px-6 font-black transition" %>
+        </div>
+        <div>
+          <%= f.label :selling_price, "Selling Price", class: "block text-xs font-black text-gray-400 uppercase tracking-widest mb-4" %>
+          <%= f.number_field :selling_price, step: 0.01, class: "w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-4 px-6 font-black transition" %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-8">
+        <div>
+          <%= f.label :stock_quantity, "Stock Quantity", class: "block text-xs font-black text-gray-400 uppercase tracking-widest mb-4" %>
+          <%= f.number_field :stock_quantity, class: "w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-4 px-6 font-black transition" %>
+        </div>
+        <div>
+          <%= f.label :min_stock_alert, "Min Stock Alert Level", class: "block text-xs font-black text-gray-400 uppercase tracking-widest mb-4" %>
+          <%= f.number_field :min_stock_alert, class: "w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-4 px-6 font-black transition" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between pt-12 border-t border-gray-100">
+    <%= link_to "Cancel", admin_products_path, class: "text-gray-400 hover:text-indigo-600 font-extrabold uppercase text-xs tracking-widest transition" %>
+    <%= f.submit (product.new_record? ? "Create Product" : "Update Product"), class: "bg-indigo-600 text-white px-12 py-5 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-indigo-700 transition shadow-lg cursor-pointer transform hover:-translate-y-1 active:scale-95 shadow-indigo-100" %>
+  </div>
+<% end %>

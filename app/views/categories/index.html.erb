@@ -1,0 +1,33 @@
+<div class="mb-12 border-b border-gray-100 pb-8">
+  <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Shop by Category</h1>
+  <p class="text-gray-500 font-medium italic">Explore our extensive range of hardware wholesale products.</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+  <% @categories.each do |category| %>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-xl transition duration-300 transform hover:-translate-y-2">
+      <div class="h-48 bg-indigo-50 flex items-center justify-center text-indigo-300 group-hover:bg-indigo-600 group-hover:text-white transition duration-300">
+        <svg class="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+      </div>
+      <div class="p-8">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-2xl font-black text-gray-900 tracking-tight"><%= category.name %></h3>
+          <span class="text-xs font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full"><%= category.products.count %> Items</span>
+        </div>
+        <p class="text-gray-500 text-sm font-medium leading-relaxed italic mb-8 line-clamp-2"><%= category.description %></p>
+        <%= link_to "View Products", products_path(category_id: category.id), class: "block w-full bg-gray-900 text-white text-center py-4 rounded-xl font-black uppercase text-xs tracking-widest hover:bg-indigo-600 transition shadow-lg shadow-gray-200 group-hover:shadow-indigo-100" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<% if @categories.empty? %>
+  <div class="text-center py-24 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+    <div class="bg-white w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8 text-gray-300 shadow-sm">
+       <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    </div>
+    <h3 class="text-2xl font-bold text-gray-900 mb-2">Coming Soon</h3>
+    <p class="text-gray-500 mb-10 max-w-sm mx-auto font-medium">We're currently organizing our hardware inventory. Please check back later.</p>
+    <%= link_to "Browse All Products", products_path, class: "bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg" %>
+  </div>
+<% end %>
