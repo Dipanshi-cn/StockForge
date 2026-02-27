@@ -54,7 +54,7 @@
         <div class="bg-white rounded-[2rem] shadow-xl shadow-gray-100 border border-gray-100 overflow-hidden flex flex-col group hover:shadow-2xl transition duration-500 transform hover:-translate-y-2">
           <div class="relative h-64 bg-gray-50 flex items-center justify-center overflow-hidden">
              <div class="absolute inset-0 bg-gradient-to-tr from-white to-transparent opacity-50 group-hover:scale-110 transition transform duration-700"></div>
-             <svg class="w-24 h-24 text-gray-200 relative z-10 group-hover:text-blue-200 transition duration-500 transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+             <i data-lucide="<%= category_icon_name(product.category.name) %>" class="w-24 h-24 text-gray-200 relative z-10 group-hover:text-blue-200 transition duration-500 transform group-hover:rotate-12"></i>
              <div class="absolute top-6 right-6">
                 <span class="inline-flex items-center px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md border-2 border-white
                   <%= product.stock_quantity > 0 ? 'bg-green-600 text-white' : 'bg-red-600 text-white' %>">

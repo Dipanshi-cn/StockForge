@@ -12,7 +12,7 @@
   <% @products.each do |product| %>
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-xl transition duration-300 transform hover:-translate-y-2">
       <div class="h-48 bg-gray-50 flex items-center justify-center text-gray-300 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition duration-300">
-        <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+        <i data-lucide="<%= category_icon_name(product.category.name) %>" class="w-16 h-16"></i>
       </div>
       <div class="p-8 flex flex-col h-full">
         <div class="flex items-center justify-between mb-4">
